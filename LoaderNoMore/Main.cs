@@ -21,7 +21,7 @@ namespace LoaderNoMore
     [BepInPlugin(
         "com.Borbo.LoaderNoMore",
         "LOADER IS NO MORE",
-        "1.0.0")]
+        "2.0.0")]
     public class Main : BaseUnityPlugin
     {
         internal static ConfigFile CustomConfigFile { get; set; }
@@ -72,7 +72,7 @@ namespace LoaderNoMore
                 string[] substrings = nameToken.Split('_');
                 foreach (string substring in substrings)
                 {
-                    Debug.Log(substring);
+                    //Debug.Log(substring);
                 }
 
                 LoaderNoMoreSkillSlotData currentSlotData = new LoaderNoMoreSkillSlotData();
@@ -82,7 +82,6 @@ namespace LoaderNoMore
                     SkillFamily family = skillSlotData.skillFamily;
                     if(skillSlotData.bodyName == substrings[0] && family.name == substrings[1])
                     {
-                        Debug.Log("A");
                         currentSlotData = skillSlotData;
                         skillFamily = family;
                     }
@@ -90,15 +89,12 @@ namespace LoaderNoMore
 
                 if(skillFamily == null)
                 {
-                    Debug.Log("B");
                     GameObject body = Resources.Load<GameObject>("prefabs/characterbodies/" + substrings[0]);//BodyCatalog.FindBodyPrefab(substrings[0]);
                     if (body != null)
                     {
-                        Debug.Log("C");
                         SkillLocator skillLocator = body.GetComponent<SkillLocator>();
                         if (skillLocator != null)
                         {
-                            Debug.Log("D");
                             GenericSkill skillSlot = null;
                             bool doPassive = false;
 
@@ -128,7 +124,6 @@ namespace LoaderNoMore
                             }
                             else if (skillSlot != null)
                             {
-                                Debug.Log("E");
                                 skillFamily = skillSlot.skillFamily;
                                 currentSlotData.indices = new List<string>();
                                 currentSlotData.skillFamily = skillFamily;
@@ -140,7 +135,6 @@ namespace LoaderNoMore
 
                 if(skillFamily != null)
                 {
-                    Debug.Log("F");
                     SkillFamily.Variant[] variants = skillFamily.variants;
                     string index = substrings[2];
                     Debug.Log(index);
@@ -174,18 +168,12 @@ namespace LoaderNoMore
 
                         if (match)//skip this entry
                         {
-                            Debug.Log("H");
-
-                            //HG.ArrayUtils.ArrayRemoveAtAndResize(ref variants, i - advance);
                             variants.RemoveAt(i - advance);
                             advance++;
                         }
                         else if(advance > 0)//back up every other entry for each one skipped
                         {
-                            Debug.Log("I");
-                            
-                            //HG.ArrayUtils.ArrayRemoveAtAndResize(ref variants, i - advance);
-                            //variants[i - advance] = variants[i];
+
                         }
                     }
 
@@ -210,7 +198,7 @@ namespace LoaderNoMore
                 "enter in the display name token from the Survivor Def; separated by commas. " +
                 "Ex: 'LOADER_BODY_NAME, MAGE_BODY_NAME, COMMANDO_BODY_NAME' (spaces will be ignored, dashes will be turned to spaces).");
 
-            SkillsToRemove = CustomConfigFile.Bind<string>("Loader Is No More", "Skills", "MageBody_Special_1, TreeBotBody_Utility_1",
+            SkillsToRemove = CustomConfigFile.Bind<string>("Loader Is No More", "Skills", "MageBody_Special_1, ToolBotBody_Special_1",
                 "For each SKILL DEF you wish to hide from the lobby: " +
                 "enter in the Character Body name, then the skill slot name, then the skill index (starting at 0); separated by commas. " +
                 "Ex: 'MageBody_Special_1, TreeBotBody_Utility_1' (spaces will be ignored, dashes will be turned to spaces).");
@@ -222,10 +210,6 @@ namespace LoaderNoMore
             fullSurvivorString = fullSurvivorString.Replace(" ", "");
             fullSurvivorString = fullSurvivorString.Replace("-", " ");
             string[] survivorNames = fullSurvivorString.Split(',');
-            foreach (string nameToken in survivorNames)
-            {
-                //Debug.Log(nameToken);
-            }
 
             int advance = 0;
             int c = newSurvivorDefs.Length;
@@ -249,15 +233,6 @@ namespace LoaderNoMore
                 {
                     newSurvivorDefs[i - advance] = newSurvivorDefs[i];
                 }
-                /*if (def.displayNameToken != "LOADER_BODY_NAME" && def.displayNameToken != "Loader 2")
-                {
-                    if(advance > 0)
-                        newSurvivorDefs[i - advance] = newSurvivorDefs[i];
-                }
-                else
-                {
-                    advance++;
-                }*/
             }
             Array.Resize(ref newSurvivorDefs, c - advance);
 
