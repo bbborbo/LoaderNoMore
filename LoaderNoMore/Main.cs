@@ -21,7 +21,7 @@ namespace LoaderNoMore
     [BepInPlugin(
         "com.Borbo.LoaderNoMore",
         "LOADER IS NO MORE",
-        "2.0.0")]
+        "2.0.2")]
     public class Main : BaseUnityPlugin
     {
         internal static ConfigFile CustomConfigFile { get; set; }
@@ -142,7 +142,6 @@ namespace LoaderNoMore
                 {
                     SkillFamily.Variant[] variants = skillFamily.variants;
                     string index = substrings[2];
-                    Debug.Log(index);
 
                     currentSlotData.indices.Add(index);
                 }
@@ -160,7 +159,6 @@ namespace LoaderNoMore
                     int c = variants.Count;
                     for (int i = 0; i < c; i++)
                     {
-                        Debug.Log("G");
                         bool match = false;
                         foreach (string index in skillSlotData.indices)
                         {
