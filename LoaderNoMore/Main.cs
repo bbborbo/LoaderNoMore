@@ -33,9 +33,33 @@ namespace LoaderNoMore
             InitializeConfig();
 
             On.RoR2.SurvivorCatalog.SetSurvivorDefs += NukeLoader;
-            //On.RoR2.BodyCatalog.GetBodyPrefabSkillSlots += NukeIonSurge;
             On.RoR2.Loadout.GenerateViewables += NukeIonSurge;
             //NukeSurge();
+        }
+        private void InitializeConfig()
+        {
+            CustomConfigFile = new ConfigFile(Paths.ConfigPath + "\\LoaderNoMore.cfg", true);
+
+            SurvivorsToRemove = CustomConfigFile.Bind<string>("Loader Is No More", "Survivors", "LOADER_BODY_NAME, Loader-2",
+                "For each SURVIVOR DEF you wish to hide from the lobby: " +
+                "enter in the display name token from the Survivor Def; separated by commas. " +
+                "Ex: 'LOADER_BODY_NAME, MAGE_BODY_NAME, COMMANDO_BODY_NAME' (spaces will be ignored, dashes will be turned to spaces).");
+
+            SkillsToRemove = CustomConfigFile.Bind<string>("Loader Is No More", "Skills", "MageBody_Special_1, ToolBotBody_Special_1",
+                "For each SKILL DEF you wish to hide from the lobby: " +
+                "enter in the Character Body name, then the skill slot name, then the skill index (starting at 0); separated by commas. " +
+                "Ex: 'MageBody_Special_1, TreeBotBody_Utility_1' (spaces will be ignored, dashes will be turned to spaces).");
+        }
+
+        #region skill removal
+        internal static List<LoaderNoMoreSkillSlotData> allSkillSlotData = new List<LoaderNoMoreSkillSlotData>(0);
+
+        internal struct LoaderNoMoreSkillSlotData
+        {
+            internal string bodyName;
+            internal SkillFamily skillFamily;
+            internal int advance;
+            internal List<string> indices;
         }
 
         private void NukeIonSurge(On.RoR2.Loadout.orig_GenerateViewables orig)
@@ -170,17 +194,6 @@ namespace LoaderNoMore
             }
             orig();
         }
-
-        internal static List<LoaderNoMoreSkillSlotData> allSkillSlotData = new List<LoaderNoMoreSkillSlotData>(0);
-
-        internal struct LoaderNoMoreSkillSlotData
-        {
-            internal string bodyName;
-            internal SkillFamily skillFamily;
-            internal int advance;
-            internal List<string> indices;
-        }
-
         private void NukeSurge()
         {
             string fullSkillString = SkillsToRemove.Value;
@@ -312,22 +325,10 @@ namespace LoaderNoMore
                 }
             }
         }
+        #endregion
 
-        private void InitializeConfig()
-        {
-            CustomConfigFile = new ConfigFile(Paths.ConfigPath + "\\LoaderNoMore.cfg", true);
 
-            SurvivorsToRemove = CustomConfigFile.Bind<string>("Loader Is No More", "Survivors", "LOADER_BODY_NAME, Loader-2",
-                "For each SURVIVOR DEF you wish to hide from the lobby: " +
-                "enter in the display name token from the Survivor Def; separated by commas. " +
-                "Ex: 'LOADER_BODY_NAME, MAGE_BODY_NAME, COMMANDO_BODY_NAME' (spaces will be ignored, dashes will be turned to spaces).");
-
-            SkillsToRemove = CustomConfigFile.Bind<string>("Loader Is No More", "Skills", "MageBody_Special_1, ToolBotBody_Special_1",
-                "For each SKILL DEF you wish to hide from the lobby: " +
-                "enter in the Character Body name, then the skill slot name, then the skill index (starting at 0); separated by commas. " +
-                "Ex: 'MageBody_Special_1, TreeBotBody_Utility_1' (spaces will be ignored, dashes will be turned to spaces).");
-        }
-
+        #region survivor removal
         private void NukeLoader(On.RoR2.SurvivorCatalog.orig_SetSurvivorDefs orig, SurvivorDef[] newSurvivorDefs)
         {
             string fullSurvivorString = SurvivorsToRemove.Value;
@@ -362,5 +363,6 @@ namespace LoaderNoMore
 
             orig(newSurvivorDefs);
         }
+        #endregion
     }
 }
